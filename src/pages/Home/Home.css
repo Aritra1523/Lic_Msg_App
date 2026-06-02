@@ -1,0 +1,83 @@
+/* Home.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f4f7fb;
+}
+
+.home-container {
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 50px;
+  color: #1b5e20;
+  font-size: 40px;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.home-card {
+  width: 320px;
+  background: white;
+  padding: 40px 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: 0.3s;
+  text-align: center;
+}
+
+.home-card:hover {
+  transform: translateY(-8px);
+}
+
+.home-card h2 {
+  margin-bottom: 15px;
+  color: #25d366;
+  font-size: 28px;
+}
+
+.home-card p {
+  color: #555;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.logout-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  padding: 10px 20px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #dc2626;
+  color: white;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #b91c1c;
+}
