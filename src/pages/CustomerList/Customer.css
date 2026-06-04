@@ -1,89 +1,273 @@
-/* Customers.css */
+/* =============================================
+   Customer Payment History — External CSS
+   ============================================= */
 
-* {
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Root Variables ── */
+:root {
+  --bg:           #0d0f14;
+  --surface:      #151820;
+  --card:         #1c2030;
+  --border:       #2a3045;
+  --border-hover: #3d4f7a;
+
+  --primary:      #4f8ef7;
+  --primary-glow: rgba(79, 142, 247, 0.18);
+  --accent:       #00e5c0;
+  --danger:       #ff4d6d;
+  --danger-glow:  rgba(255, 77, 109, 0.18);
+
+  --text-1:       #eef0f6;
+  --text-2:       #8892aa;
+  --text-3:       #4e5a72;
+
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-lg:    16px;
+
+  --shadow-md:    0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-glow:  0 0 20px var(--primary-glow);
+
+  --font-ui:      'Sora', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --transition:   0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
 }
 
 body {
-  background: #f4f7fb;
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100vh;
 }
 
+/* ── Container ── */
 .customers-container {
-  width: 95%;
-  max-width: 1200px;
-  margin: 40px auto;
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
 }
 
+/* ── Heading ── */
 .customers-container h1 {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #1b5e20;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-1);
+  margin-bottom: 32px;
+  position: relative;
+  display: inline-block;
+}
+
+.customers-container h1::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 48px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 99px;
+}
+
+/* ── Search Input ── */
+.search-input {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  margin-bottom: 32px;
+  padding: 12px 18px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.search-input::placeholder {
+  color: var(--text-3);
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* ── Status Messages ── */
+.customers-container p {
+  color: var(--text-2);
+  font-size: 0.95rem;
+  padding: 16px 0;
 }
 
 .no-data {
   text-align: center;
-  font-size: 18px;
-  color: gray;
+  padding: 64px 0 !important;
+  color: var(--text-3) !important;
+  font-size: 1rem !important;
 }
 
-table {
+/* ── Table Wrapper (scroll) ── */
+.customers-container table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
 }
 
-thead {
-  background: #25d366;
-  color: white;
+/* ── Table Head ── */
+.customers-container thead tr {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
-th,
-td {
-  padding: 14px;
-  text-align: center;
-  border: 1px solid #ddd;
+.customers-container th {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  white-space: nowrap;
 }
 
-tbody tr:hover {
-  background: #f5f5f5;
+/* ── Table Body ── */
+.customers-container tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
 }
 
-.receipt-badge {
-  background: #1b5e20;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-.search-input {
-  width: 100%;
-  max-width: 500px;
-  padding: 12px;
-  margin: 20px 0;
-
-  border: 1px solid #ddd;
-  border-radius: 8px;
-
-  font-size: 16px;
+.customers-container tbody tr:last-child {
+  border-bottom: none;
 }
 
-.delete-btn {
-  background: #dc2626;
-  color: white;
+.customers-container tbody tr:hover {
+  background: rgba(79, 142, 247, 0.05);
+}
 
+.customers-container td {
+  padding: 14px 18px;
+  font-size: 0.875rem;
+  color: var(--text-1);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* ── Money cell ── */
+.customers-container td:nth-child(4) {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ── Date cells ── */
+.customers-container td:nth-child(5),
+.customers-container td:nth-child(6) {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+/* ── "No PDF" text ── */
+.customers-container td:nth-child(7):not(:has(button)),
+.customers-container td:nth-child(8):not(:has(button)) {
+  color: var(--text-3);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* ── Buttons — base ── */
+.customers-container button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
   border: none;
-  padding: 8px 12px;
-
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition),
+    background var(--transition), opacity var(--transition);
+  letter-spacing: 0.01em;
+}
+
+.customers-container button:active {
+  transform: scale(0.95);
+}
+
+/* ── View Button ── */
+.customers-container td:nth-child(7) button {
+  background: var(--primary-glow);
+  color: var(--primary);
+  border: 1px solid rgba(79, 142, 247, 0.3);
+}
+
+.customers-container td:nth-child(7) button:hover {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+/* ── Download Button ── */
+.customers-container td:nth-child(8) button {
+  background: rgba(0, 229, 192, 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(0, 229, 192, 0.25);
+}
+
+.customers-container td:nth-child(8) button:hover {
+  background: var(--accent);
+  color: #0d0f14;
+  box-shadow: 0 4px 14px rgba(0, 229, 192, 0.25);
+}
+
+/* ── Delete Button ── */
+.delete-btn {
+  background: var(--danger-glow) !important;
+  color: var(--danger) !important;
+  border: 1px solid rgba(255, 77, 109, 0.25) !important;
 }
 
 .delete-btn:hover {
-  background: #b91c1c;
+  background: var(--danger) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px var(--danger-glow) !important;
+}
+
+/* ── Responsive: horizontal scroll ── */
+@media (max-width: 900px) {
+  .customers-container {
+    padding: 28px 16px 60px;
+  }
+
+  .customers-container table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .search-input {
+    max-width: 100%;
+  }
 }
