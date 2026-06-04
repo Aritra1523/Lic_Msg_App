@@ -65,7 +65,7 @@ doc.text(`Premium Amount: Rs. ${data.amount}`, 20, 115);    doc.text(`Paid Date:
      const doc = await generateReceiptPDF(formData);
 
       // Download PDF locally
-      doc.save(`${name}_Receipt.pdf`);
+      // doc.save(`${name}_Receipt.pdf`);
 
       // Convert PDF to Blob
       const pdfBlob = doc.output("blob");
