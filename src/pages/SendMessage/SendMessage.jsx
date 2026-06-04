@@ -1,7 +1,7 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
 import { ID } from "appwrite";
-
+import { generateReceiptPDF } from "../ReceiptPDF/generateReceiptPDF";
 import {
   databases,
   storage,
@@ -43,8 +43,7 @@ function SendMessage() {
     doc.text(`Receipt ID: ${receiptId}`, 20, 40);
     doc.text(`Customer Name: ${formData.name}`, 20, 55);
     doc.text(`Policy Number: ${formData.policyNumber}`, 20, 70);
-    doc.text(`Amount Paid: ₹${formData.amount}`, 20, 85);
-    doc.text(`Paid Date: ${formData.date}`, 20, 100);
+doc.text(`Premium Amount: Rs. ${data.amount}`, 20, 115);    doc.text(`Paid Date: ${formData.date}`, 20, 100);
     doc.text("Received By: LIC Agent", 20, 120);
     doc.text("Thank You", 20, 140);
 
@@ -52,21 +51,9 @@ function SendMessage() {
   };
 
   const sendWhatsApp = async () => {
-    const {
-      name,
-      phone,
-      policyNumber,
-      amount,
-      date,
-    } = formData;
+    const { name, phone, policyNumber, amount, date } = formData;
 
-    if (
-      !name ||
-      !phone ||
-      !policyNumber ||
-      !amount ||
-      !date
-    ) {
+    if (!name || !phone || !policyNumber || !amount || !date) {
       alert("Please fill all fields");
       return;
     }
@@ -75,7 +62,7 @@ function SendMessage() {
       setLoading(true);
 
       // Generate PDF
-      const doc = generatePDF();
+     const doc = await generateReceiptPDF(formData);
 
       // Download PDF locally
       doc.save(`${name}_Receipt.pdf`);
@@ -84,40 +71,29 @@ function SendMessage() {
       const pdfBlob = doc.output("blob");
 
       // Create File
-      const file = new File(
-        [pdfBlob],
-        `${name}_Receipt.pdf`,
-        {
-          type: "application/pdf",
-        }
-      );
+      const file = new File([pdfBlob], `${name}_Receipt.pdf`, {
+        type: "application/pdf",
+      });
 
       // Upload PDF to Appwrite Storage
-      const uploadedFile =
-        await storage.createFile(
-          BUCKET_ID,
-          ID.unique(),
-          file
-        );
+      const uploadedFile = await storage.createFile(
+        BUCKET_ID,
+        ID.unique(),
+        file,
+      );
 
       const pdfId = uploadedFile.$id;
 
       // Save Customer Data
-      await databases.createDocument(
-        DATABASE_ID,
-        COLLECTION_ID,
-        ID.unique(),
-        {
-          name,
-          phone,
-          policyNumber,
-          amount,
-          paidDate: date,
-          sendDate:
-            new Date().toLocaleDateString(),
-          pdfId,
-        }
-      );
+      await databases.createDocument(DATABASE_ID, COLLECTION_ID, ID.unique(), {
+        name,
+        phone,
+        policyNumber,
+        amount,
+        paidDate: date,
+        sendDate: new Date().toLocaleDateString(),
+        pdfId,
+      });
 
       // WhatsApp Message
       const message = `Dear ${name},
@@ -130,7 +106,7 @@ Date: ${date}
 Thank you.`;
 
       const whatsappURL = `https://wa.me/91${phone}?text=${encodeURIComponent(
-        message
+        message,
       )}`;
 
       window.open(whatsappURL, "_blank");
@@ -196,13 +172,8 @@ Thank you.`;
           onChange={handleChange}
         />
 
-        <button
-          onClick={sendWhatsApp}
-          disabled={loading}
-        >
-          {loading
-            ? "Sending..."
-            : "Send Receipt"}
+        <button onClick={sendWhatsApp} disabled={loading}>
+          {loading ? "Sending..." : "Send Receipt"}
         </button>
       </div>
     </div>

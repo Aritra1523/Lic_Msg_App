@@ -14,17 +14,18 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    account
-      .get()
-      .then((res) => {
-        setUser(res);
-      })
-      .catch(() => {
+    const checkUser = async () => {
+      try {
+        const currentUser = await account.get();
+        setUser(currentUser);
+      } catch (error) {
         setUser(null);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    checkUser();
   }, []);
 
   if (loading) {
@@ -33,7 +34,10 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/login"
+        element={<Login setUser={setUser} />}
+      />
 
       <Route
         path="/"

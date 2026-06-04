@@ -61,3 +61,29 @@ tbody tr:hover {
   border-radius: 6px;
   font-size: 14px;
 }
+.search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px;
+  margin: 20px 0;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  font-size: 16px;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: white;
+
+  border: none;
+  padding: 8px 12px;
+
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}

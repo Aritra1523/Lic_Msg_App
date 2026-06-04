@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { account } from "../../appwrite/appwrite";
 import { useNavigate } from "react-router-dom";
-import "./Login.css"
-function Login() {
+import "./Login.css";
+
+function Login({ setUser }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -11,6 +12,23 @@ function Login() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const user = await account.get();
+
+        if (user) {
+          setUser(user);
+          navigate("/");
+        }
+      } catch (error) {
+        console.log("No active session");
+      }
+    };
+
+    checkSession();
+  }, [navigate, setUser]);
 
   const handleChange = (e) => {
     setFormData({
@@ -25,13 +43,28 @@ function Login() {
     try {
       setLoading(true);
 
+      // If already logged in, skip creating session
+      try {
+        const existingUser = await account.get();
+
+        if (existingUser) {
+          setUser(existingUser);
+          navigate("/");
+          return;
+        }
+      } catch {
+        // No session exists, continue login
+      }
+
       await account.createEmailPasswordSession(
         formData.email,
         formData.password
       );
-const user = await account.get(); 
 
-      alert("Login Successful");
+      const currentUser = await account.get();
+
+      setUser(currentUser);
+
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -52,6 +85,7 @@ const user = await account.get();
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
+          required
         />
 
         <input
@@ -60,10 +94,16 @@ const user = await account.get();
           placeholder="Password"
           value={formData.password}
           onChange={handleChange}
+          required
         />
 
-        <button type="submit">
-          {loading ? "Logging in..." : "Login"}
+        <button
+          type="submit"
+          disabled={loading}
+        >
+          {loading
+            ? "Logging in..."
+            : "Login"}
         </button>
       </form>
     </div>
