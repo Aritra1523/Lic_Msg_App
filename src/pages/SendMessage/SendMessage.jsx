@@ -53,7 +53,7 @@ doc.text(`Premium Amount: Rs. ${data.amount}`, 20, 115);    doc.text(`Paid Date:
   const sendWhatsApp = async () => {
     const { name, phone, policyNumber, amount, date } = formData;
 
-    if (!name || !phone || !policyNumber || !amount || !date) {
+    if (!name || !phone || policyNumber || !amount || !date) {
       alert("Please fill all fields");
       return;
     }
