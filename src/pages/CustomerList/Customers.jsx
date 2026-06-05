@@ -13,17 +13,19 @@ function Customers() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   const getCustomers = async () => {
     try {
       const response = await databases.listDocuments(
         DATABASE_ID,
-        COLLECTION_ID,
+        COLLECTION_ID
       );
 
       setCustomers(response.documents);
     } catch (error) {
       console.log(error);
+
       Swal.fire({
         title: "Error!",
         text: error.message,
@@ -40,31 +42,37 @@ function Customers() {
 
   const viewPDF = (pdfId) => {
     const pdfUrl = storage.getFileView(BUCKET_ID, pdfId);
-
     window.open(pdfUrl, "_blank");
   };
 
   const downloadPDF = (pdfId) => {
     const pdfUrl = storage.getFileDownload(BUCKET_ID, pdfId);
-
     window.open(pdfUrl, "_blank");
   };
 
   const deleteCustomer = async (customer) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this customer?",
+      "Are you sure you want to delete this customer?"
     );
 
     if (!confirmDelete) return;
 
     try {
+      setDeleting(true);
+
       if (customer.pdfId) {
         await storage.deleteFile(BUCKET_ID, customer.pdfId);
       }
 
-      await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, customer.$id);
+      await databases.deleteDocument(
+        DATABASE_ID,
+        COLLECTION_ID,
+        customer.$id
+      );
 
-      setCustomers(customers.filter((item) => item.$id !== customer.$id));
+      setCustomers((prev) =>
+        prev.filter((item) => item.$id !== customer.$id)
+      );
 
       Swal.fire({
         title: "Deleted!",
@@ -74,7 +82,14 @@ function Customers() {
       });
     } catch (error) {
       console.log(error);
-      alert(error.message);
+
+      Swal.fire({
+        title: "Error!",
+        text: error.message,
+        icon: "error",
+      });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -82,11 +97,18 @@ function Customers() {
     (customer) =>
       customer.name?.toLowerCase().includes(search.toLowerCase()) ||
       customer.phone?.includes(search) ||
-      customer.policyNumber?.includes(search),
+      customer.policyNumber?.includes(search)
   );
 
   return (
     <div className="customers-container">
+      {deleting && (
+        <div className="delete-overlay">
+          <div className="loader"></div>
+          <p>Deleting customer...</p>
+        </div>
+      )}
+
       <h1>Customer Payment History</h1>
 
       <input
@@ -121,20 +143,17 @@ function Customers() {
             {filteredCustomers.map((item) => (
               <tr key={item.$id}>
                 <td>{item.name}</td>
-
                 <td>{item.phone}</td>
-
                 <td>{item.policyNumber}</td>
-
                 <td>₹{item.amount}</td>
-
                 <td>{item.paidDate}</td>
-
                 <td>{item.sendDate}</td>
 
                 <td>
                   {item.pdfId ? (
-                    <button onClick={() => viewPDF(item.pdfId)}>View</button>
+                    <button onClick={() => viewPDF(item.pdfId)}>
+                      View
+                    </button>
                   ) : (
                     "No PDF"
                   )}
@@ -142,7 +161,9 @@ function Customers() {
 
                 <td>
                   {item.pdfId ? (
-                    <button onClick={() => downloadPDF(item.pdfId)}>
+                    <button
+                      onClick={() => downloadPDF(item.pdfId)}
+                    >
                       Download
                     </button>
                   ) : (
@@ -154,6 +175,7 @@ function Customers() {
                   <button
                     className="delete-btn"
                     onClick={() => deleteCustomer(item)}
+                    disabled={deleting}
                   >
                     Delete
                   </button>

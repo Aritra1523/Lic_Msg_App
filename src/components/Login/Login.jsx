@@ -10,6 +10,7 @@ function Login({ setUser }) {
   });
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
 
   const navigate = useNavigate();
 
@@ -17,7 +18,6 @@ function Login({ setUser }) {
     const checkSession = async () => {
       try {
         const user = await account.get();
-
         if (user) {
           setUser(user);
           navigate("/");
@@ -26,7 +26,6 @@ function Login({ setUser }) {
         console.log("No active session");
       }
     };
-
     checkSession();
   }, [navigate, setUser]);
 
@@ -39,14 +38,10 @@ function Login({ setUser }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       setLoading(true);
-
-      // If already logged in, skip creating session
       try {
         const existingUser = await account.get();
-
         if (existingUser) {
           setUser(existingUser);
           navigate("/");
@@ -55,16 +50,12 @@ function Login({ setUser }) {
       } catch {
         // No session exists, continue login
       }
-
       await account.createEmailPasswordSession(
         formData.email,
         formData.password
       );
-
       const currentUser = await account.get();
-
       setUser(currentUser);
-
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -88,22 +79,40 @@ function Login({ setUser }) {
           required
         />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+        <div className="password-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <button
+            type="button"
+            className="toggle-password"
+            onClick={() => setShowPassword((prev) => !prev)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              // Eye-off icon (hide)
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            ) : (
+              // Eye icon (show)
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            )}
+          </button>
+        </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-        >
-          {loading
-            ? "Logging in..."
-            : "Login"}
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

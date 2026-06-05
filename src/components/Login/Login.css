@@ -212,7 +212,36 @@ body {
   animation: spin 0.7s linear infinite;
   vertical-align: middle;
 }
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
 
+.password-wrapper input {
+  width: 100%;
+  padding-right: 2.8rem; /* make room for the button */
+  box-sizing: border-box;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.toggle-password:hover {
+  color: #333;
+}
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
