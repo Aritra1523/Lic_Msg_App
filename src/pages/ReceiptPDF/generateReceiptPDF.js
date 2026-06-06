@@ -58,7 +58,7 @@ export const generateReceiptPDF = async (data) => {
   const rows = [
     ["Customer Name", data.name],
     ["Policy Number", data.policyNumber],
-    ["Premium Amount", `Rs ${Number(data.amount).toLocaleString("en-IN")}`],
+    ["Paid Amount", `Rs ${Number(data.amount).toLocaleString("en-IN")}`],
     ["Paid Date", formatDate(data.date)],
     ["Generated On", formatDate(new Date().toISOString())],
   ];
